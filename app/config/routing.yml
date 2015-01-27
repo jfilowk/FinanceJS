@@ -5,3 +5,4 @@ transaction:
 app:
     resource: @AppBundle/Controller/
     type:     annotation
+
