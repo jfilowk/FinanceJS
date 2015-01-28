@@ -35,7 +35,7 @@ class Transactions extends AbstractFixture implements OrderedFixtureInterface
             $transaction = new Transaction();
 
             $transaction->setAmount(mt_rand(0*10, 10000*10)/100);
-            $transaction->setTransactionDate(new \DateTime('now + '.rand(0, 7).' days'));
+            $transaction->setTransactionDate(new \DateTime('now + '.$i.' days'));
             $transaction->setUser(mt_rand(1, 3));
 
             $manager->persist($transaction);

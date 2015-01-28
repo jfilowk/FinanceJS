@@ -1,11 +1,9 @@
 $(document).ready(function () {
 
     var searchInput = $('#search');
-    var tableTrans = $('#transactions').find('tbody tr');
     var operation = $('#operation');
-    var userId = $('#userID');
 
-    searchInput.bind('keyup', tableTrans, function () {
+    searchInput.bind('keyup', $('#transactions').find('table tbody tr'), function () {
         if (operation.val() == "") {
             searchWords();
         } else {
@@ -14,7 +12,7 @@ $(document).ready(function () {
     });
 
 
-    operation.bind('change', tableTrans, function () {
+    operation.bind('change', $('#transactions').find('table tbody tr'), function () {
         if (operation.val() == "<" || operation.val() == ">" || operation.val() == "=") {
             searchInput.val('');
             searchInput.attr('placeholder', 'Search amount...')
@@ -31,7 +29,7 @@ $(document).ready(function () {
 
         var filter = searchInput.val();
 
-        tableTrans.each(function () {
+        $('#transactions').find('table tbody tr').each(function () {
 
             if ($(this).text().search(new RegExp(filter)) < 0) {
                 $(this).fadeOut();
@@ -43,7 +41,7 @@ $(document).ready(function () {
 
     function searchOperation() {
         if (operation.val() == "<") {
-            tableTrans.each(function () {
+            $('#transactions').find('table tbody tr').each(function () {
                 if (parseFloat($(this).find('#amount').text()) < parseFloat(searchInput.val())) {
                     $(this).show()
                 } else {
@@ -52,9 +50,8 @@ $(document).ready(function () {
             })
         } else if (operation.val() == ">") {
             console.log(">");
-            tableTrans.each(function () {
+            $('#transactions').find('table tbody tr').each(function () {
                 if (parseFloat($(this).find('#amount').text()) > parseFloat(searchInput.val())) {
-                    console.log($(this).find('#amount').text());
                     $(this).show()
                 } else {
                     $(this).fadeOut()
@@ -62,7 +59,7 @@ $(document).ready(function () {
             })
         } else if (operation.val() == "=") {
             console.log("=");
-            tableTrans.each(function () {
+            $('#transactions').find('table tbody tr').each(function () {
                 if (parseFloat($(this).find('#amount').text()) == parseFloat(searchInput.val())) {
                     $(this).show()
                 } else {
@@ -73,5 +70,27 @@ $(document).ready(function () {
             searchWords();
         }
     }
+
+    var userId;
+    var table_transactions = $('#transactions').find('table tbody');
+    $('#userID').on('change', (function () {
+        userId = $(this).val();
+        $.post('/financeJS/web/app_dev.php/transaction/ajax/user', {id: userId}, function (data) {
+            table_transactions.empty();
+            $.each(data, function (key, value) {
+                var transaction_date = moment(value['transaction_date']['date'], "YYYY-MM-DD HH:mm Z").format('DD/MM/YYYY');
+                table_transactions.append('\n<tr>\n' +
+                '<td>' + value['id'] + '</td>\n' +
+                '<td id="amount">' + value['amount'] + '</td>\n' +
+                '<td>' + transaction_date + '</td>\n' +
+                '<td>' + value['user'] + '</td>\n' +
+                '</tr>\n')
+            })
+
+            searchWords();
+            searchOperation();
+
+        })
+    }));
 
 });

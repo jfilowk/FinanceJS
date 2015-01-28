@@ -13,7 +13,15 @@
                 {% endif %}
             {% endfor %}
         </select>
+    </div>
 
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h3 class="panel-title">Gráfico</h3>
+        </div>
+        <div id="chart" class="panel-body">
+
+        </div>
     </div>
 
     <div class="panel panel-default">
@@ -54,7 +62,7 @@
                     <tr>
                         <td>{{ transaction.id }}</td>
                         <td id="amount">{{ transaction.amount }}</td>
-                        <td>{{ transaction.transactionDate | date('d-m-Y') }}</td>
+                        <td>{{ transaction.transactionDate | date('d/m/Y') }}</td>
                         <td>{{ transaction.user }}</td>
                     </tr>
                 {% endfor %}
@@ -67,47 +75,22 @@
         {{ parent() }}
         <script>
             $(document).ready(function () {
-                var userId = 1;
-                var table_transactions = $('#transactions').find('table');
-                $('#userID').change(function () {
-                    /*userId = $(this).val();
-                    $.post('{{ path('transaction_user_json') }}', {id: userId}, function (data) {
-                        console.log(data);
-                        table_transactions.empty();
-                        $.each(data, function (key, value) {
-                            var transaction_date = moment(value['transaction_date']['date'], "YYYY-MM-DD HH:mm Z").format('DD-MM-YYYY');
-                            table_transactions.append('\n<tr>\n' +
-                            '<td>' + value['id'] + '</td>\n' +
-                            '<td id="amount">' + value['amount'] + '</td>\n' +
-                            '<td>' + transaction_date + '</td>\n' +
-                            '<td>' + value['user'] + '</td>\n' +
-                            '</tr>\n')
-                        })
-                    })*/
-                    $.ajax({
-                        type: 'POST',
-                        url: '/FinanceJS/web/app_dev.php/transaction/ajax/user',
-                        data: { id: userId },
-                        beforeSend:function(){
-                            // this is where we append a loading image
-                            table_transactions.find('tbody').remove()
-                            table_transactions.add('<tbody>');
-                        },
-                        success:function(data){
-                            $.each(data, function (key, value) {
-                                var transaction_date = moment(value['transaction_date']['date'], "YYYY-MM-DD HH:mm Z").format('DD-MM-YYYY');
-                                table_transactions.append('\n<tr>\n' +
-                                '<td>' + value['id'] + '</td>\n' +
-                                '<td id="amount">' + value['amount'] + '</td>\n' +
-                                '<td>' + transaction_date + '</td>\n' +
-                                '<td>' + value['user'] + '</td>\n' +
-                                '</tr>\n')
-                            })
+                var data = [];
+                {% for transaction in transactions %}
+                data.push([{{ transaction.id }}, {{ transaction.amount | round }}]);
+                {% endfor %}
+                console.log(data);
+                $.plot($("#chart"), [data], {
+                    xaxis: {
+                        mode: "time",
+                        timeformat:"%d/%m/%Y"
+                    },
+                    series: {
+                        bars: {
+                            show: true
                         }
-                    })
+                    }
                 });
-
-
             });
         </script>
     {% endblock %}
