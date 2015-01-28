@@ -6,6 +6,10 @@ transaction_all:
     path: /transaction/all
     defaults: { _controller: TransactionBundle:Default:allTransaction }
 
+transaction_user_json:
+    path: /transaction/ajax/user
+    defaults: { _controller: TransactionBundle:Default:userTransactionJson }
+
 transaction_user:
     path: /transaction/{id}
     defaults: { _controller: TransactionBundle:Default:userTransaction }

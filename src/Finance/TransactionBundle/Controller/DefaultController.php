@@ -25,6 +25,24 @@ class DefaultController extends Controller
 
     }
 
+    public function userTransactionJsonAction()
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $request = $this->container->get('request');
+        $id = $request->get('id');
+        if ($id == "" || $id == null) {
+            $transactions = $em->getRepository('TransactionBundle:Transaction')->findAll();
+        } else {
+            $transactions = $em->getRepository('TransactionBundle:Transaction')->findByUser($id);
+        }
+
+
+        return new JsonResponse($transactions);
+
+    }
+
     public function allTransactionAction()
     {
         $em = $this->getDoctrine()->getManager();

@@ -3,18 +3,20 @@ $(document).ready(function () {
     var searchInput = $('#search');
     var tableTrans = $('#transactions').find('tbody tr');
     var operation = $('#operation');
+    var userId = $('#userID');
 
-    searchInput.keyup(function () {
+    searchInput.bind('keyup', tableTrans, function () {
         if (operation.val() == "") {
             searchWords();
         } else {
             searchOperation()
         }
-
     });
 
-    operation.change(function () {
+
+    operation.bind('change', tableTrans, function () {
         if (operation.val() == "<" || operation.val() == ">" || operation.val() == "=") {
+            searchInput.val('');
             searchInput.attr('placeholder', 'Search amount...')
             searchOperation();
         } else {
@@ -52,6 +54,7 @@ $(document).ready(function () {
             console.log(">");
             tableTrans.each(function () {
                 if (parseFloat($(this).find('#amount').text()) > parseFloat(searchInput.val())) {
+                    console.log($(this).find('#amount').text());
                     $(this).show()
                 } else {
                     $(this).fadeOut()

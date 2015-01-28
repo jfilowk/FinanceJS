@@ -37,12 +37,12 @@
     <div class="container">
         <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9" style="background-color: #0088CC">
             <h1>Datos</h1>
-        	{% block main %}
+            {% block main %}
             {% endblock %}
         </div>
         <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="background-color: #080808">
             <h1>Extra</h1>
-        	{% block extra %}
+            {% block extra %}
             {% endblock %}
         </div>
     </div>
@@ -50,7 +50,12 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('bundles/transaction/js/jquery-1.11.2.js') }}" ></script>
-    <script src="{{ asset('bundles/transaction/js/bootstrap.min.js') }}" ></script>
-    <script src="{{ asset('bundles/transaction/js/custom.js') }}" ></script>
+    <script src="{{ asset('bundles/transaction/js/jquery-1.11.2.js') }}"></script>
+    <script src="{{ asset('bundles/transaction/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('bundles/transaction/js/custom.js') }}"></script>
+    <script src="{{ asset('bundles/transaction/js/moment.js') }}"></script>
+    <script>
+        moment().format();
+    </script>
+
 {% endblock %}

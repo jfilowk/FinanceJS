@@ -2,25 +2,39 @@
 
 {% block main %}
 
+    <div class="" style="margin-bottom: 20px">
+        <select name="userID" id="userID" class="form-control">
+            <option value="">All Users</option>
+            {% set idArray = [] %}
+            {% for transaction in transactions %}
+                {% if transaction.user not in idArray %}
+                    <option value="{{ transaction.user }}">User {{ transaction.user }}</option>
+                    {% set idArray = idArray|merge([transaction.user]) %}
+                {% endif %}
+            {% endfor %}
+        </select>
+
+    </div>
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">{% if user %} Usuario {{ transactions[0].user }} {% else %} Datos de todos los usuarios {% endif %}</h3>
         </div>
         <div class="panel-body">
             <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-               Búsqueda general o por cantidad.
+                Búsqueda general o por cantidad.
             </div>
             <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
                 <div class="form-inline">
+                    <select name="operation" id="operation" class="form-control">
+                        <option value=""> Select one</option>
+                        <option value=">"> <</option>
+                        <option value="<"> ></option>
+                        <option value="="> =</option>
+                    </select>
                     <input type="text" name="search" id="search" class="form-control" value="" title=""
                            placeholder="Search"
                            required="required">
-                    <select name="operation" id="operation" class="form-control">
-                        <option value=""> Select one</option>
-                        <option value="<"> <</option>
-                        <option value=">"> ></option>
-                        <option value="="> =</option>
-                    </select>
                 </div>
             </div>
 
@@ -48,5 +62,53 @@
             </table>
         </div>
     </div>
-
 {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            $(document).ready(function () {
+                var userId = 1;
+                var table_transactions = $('#transactions').find('table');
+                $('#userID').change(function () {
+                    /*userId = $(this).val();
+                    $.post('{{ path('transaction_user_json') }}', {id: userId}, function (data) {
+                        console.log(data);
+                        table_transactions.empty();
+                        $.each(data, function (key, value) {
+                            var transaction_date = moment(value['transaction_date']['date'], "YYYY-MM-DD HH:mm Z").format('DD-MM-YYYY');
+                            table_transactions.append('\n<tr>\n' +
+                            '<td>' + value['id'] + '</td>\n' +
+                            '<td id="amount">' + value['amount'] + '</td>\n' +
+                            '<td>' + transaction_date + '</td>\n' +
+                            '<td>' + value['user'] + '</td>\n' +
+                            '</tr>\n')
+                        })
+                    })*/
+                    $.ajax({
+                        type: 'POST',
+                        url: '/FinanceJS/web/app_dev.php/transaction/ajax/user',
+                        data: { id: userId },
+                        beforeSend:function(){
+                            // this is where we append a loading image
+                            table_transactions.find('tbody').remove()
+                            table_transactions.add('<tbody>');
+                        },
+                        success:function(data){
+                            $.each(data, function (key, value) {
+                                var transaction_date = moment(value['transaction_date']['date'], "YYYY-MM-DD HH:mm Z").format('DD-MM-YYYY');
+                                table_transactions.append('\n<tr>\n' +
+                                '<td>' + value['id'] + '</td>\n' +
+                                '<td id="amount">' + value['amount'] + '</td>\n' +
+                                '<td>' + transaction_date + '</td>\n' +
+                                '<td>' + value['user'] + '</td>\n' +
+                                '</tr>\n')
+                            })
+                        }
+                    })
+                });
+
+
+            });
+        </script>
+    {% endblock %}
+
